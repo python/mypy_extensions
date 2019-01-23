@@ -33,6 +33,7 @@ jobs:
 
   - name: "check code style with flake8"
     python: 3.7
+    dist: xenial
     env:
     - TOXENV=lint
 
