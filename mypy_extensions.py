@@ -36,8 +36,15 @@ def _typeddict_new(cls, _typename, _fields=None, **kwargs):
     elif kwargs:
         raise TypeError("TypedDict takes either a dict or keyword arguments,"
                         " but not both")
-    return _TypedDictMeta(_typename, (), {'__annotations__': dict(_fields),
-                                          '__total__': total})
+
+    ns = {'__annotations__': dict(_fields), '__total__': total}
+    try:
+        # Setting correct module is necessary to make typed dict classes pickleable.
+        ns['__module__'] = sys._getframe(1).f_globals.get('__name__', '__main__')
+    except (AttributeError, ValueError):
+        pass
+
+    return _TypedDictMeta(_typename, (), ns)
 
 
 class _TypedDictMeta(type):
@@ -50,11 +57,7 @@ class _TypedDictMeta(type):
         # via _dict_new.
         ns['__new__'] = _typeddict_new if name == 'TypedDict' else _dict_new
         tp_dict = super(_TypedDictMeta, cls).__new__(cls, name, (dict,), ns)
-        try:
-            # Setting correct module is necessary to make typed dict classes pickleable.
-            tp_dict.__module__ = sys._getframe(2).f_globals.get('__name__', '__main__')
-        except (AttributeError, ValueError):
-            pass
+
         anns = ns.get('__annotations__', {})
         msg = "TypedDict('Name', {f0: t0, f1: t1, ...}); each t must be a type"
         anns = {n: _type_check(tp, msg) for n, tp in anns.items()}
