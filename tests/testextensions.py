@@ -1,7 +1,6 @@
 import sys
 import pickle
 import typing
-import collections.abc
 from unittest import TestCase, main, skipUnless
 from mypy_extensions import TypedDict
 
@@ -49,7 +48,9 @@ class TypedDictTests(BaseTestCase):
         Emp = TypedDict('Emp', {'name': str, 'id': int})
         self.assertIsSubclass(Emp, dict)
         self.assertIsSubclass(Emp, typing.MutableMapping)
-        self.assertNotIsSubclass(Emp, collections.abc.Sequence)
+        if sys.version_info[0] >= 3:
+            import collections.abc
+            self.assertNotIsSubclass(Emp, collections.abc.Sequence)
         jim = Emp(name='Jim', id=1)
         self.assertIs(type(jim), dict)
         self.assertEqual(jim['name'], 'Jim')
@@ -64,7 +65,9 @@ class TypedDictTests(BaseTestCase):
         Emp = TypedDict('Emp', name=str, id=int)
         self.assertIsSubclass(Emp, dict)
         self.assertIsSubclass(Emp, typing.MutableMapping)
-        self.assertNotIsSubclass(Emp, collections.abc.Sequence)
+        if sys.version_info[0] >= 3:
+            import collections.abc
+            self.assertNotIsSubclass(Emp, collections.abc.Sequence)
         jim = Emp(name='Jim', id=1)  # type: ignore # mypy doesn't support keyword syntax yet
         self.assertIs(type(jim), dict)
         self.assertEqual(jim['name'], 'Jim')
