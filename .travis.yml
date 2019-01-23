@@ -2,7 +2,7 @@ language: python
 # cache package wheels (1 cache per python version)
 cache: pip
 # newer python versions are available only on xenial (while some older only on trusty) Ubuntu distribution
-dist: xenial
+dist: trusty
 sudo: required
 
 env:
@@ -12,25 +12,24 @@ jobs:
   include:
   - python: 2.7
   - python: 3.4
-    dist: trusty
   - python: 3.5.0
-    dist: trusty
   - python: 3.5.1
-    dist: trusty
   - python: 3.5.2
-    dist: trusty
   - python: 3.5.3
-    dist: trusty
   - python: 3.5
-    dist: trusty
   - python: 3.6.0
   - python: 3.6.1
   - python: 3.6.2
   - python: 3.6
+    dist: xenial
   - python: 3.7.0
+    dist: xenial
   - python: 3.7.1
+    dist: xenial
   - python: 3.7
+    dist: xenial
   - python: 3.8-dev
+    dist: xenial
 
   - name: "check code style with flake8"
     python: 3.7
