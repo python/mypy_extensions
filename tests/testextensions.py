@@ -97,8 +97,8 @@ class TypedDictTests(BaseTestCase):
 
     @skipUnless(PY36, 'Python 3.6 required')
     def test_py36_class_syntax_usage(self):
-        self.assertEqual(LabelPoint2D.__name__, 'LabelPoint2D')
-        self.assertEqual(LabelPoint2D.__module__, __name__)
+        self.assertEqual(LabelPoint2D.__name__, 'LabelPoint2D')  # noqa
+        self.assertEqual(LabelPoint2D.__module__, __name__)  # noqa
         self.assertEqual(LabelPoint2D.__annotations__, {'x': int, 'y': int, 'label': str})  # noqa
         self.assertEqual(LabelPoint2D.__bases__, (dict,))  # noqa
         self.assertEqual(LabelPoint2D.__total__, True)  # noqa
