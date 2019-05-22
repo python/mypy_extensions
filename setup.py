@@ -39,6 +39,7 @@ setup(
     py_modules=['mypy_extensions'],
     classifiers=classifiers,
     install_requires=[
-        'typing >= 3.5.3; python_version < "3.5"',
+        'typing >= 3.5.3',
+        'python_version >= 3.5',
     ],
 )
