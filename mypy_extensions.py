@@ -144,6 +144,10 @@ def trait(cls):
     return cls
 
 
+def mypyc_attr(*attrs, **kwattrs):
+    return lambda x: x
+
+
 # TODO: We may want to try to properly apply this to any type
 # variables left over...
 class _FlexibleAliasClsApplied:
