@@ -34,7 +34,7 @@ setup(
     long_description=long_description,
     author='The mypy developers',
     author_email='jukka.lehtosalo@iki.fi',
-    url='http://www.mypy-lang.org/',
+    url='https://github.com/python/mypy_extensions',
     license='MIT License',
     py_modules=['mypy_extensions'],
     classifiers=classifiers,
