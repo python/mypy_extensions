@@ -164,3 +164,11 @@ class _FlexibleAliasCls:
 
 
 FlexibleAlias = _FlexibleAliasCls()
+
+
+class _Expand:
+    def __getitem__(self, args):
+        pass
+
+
+Expand = _Expand()
