@@ -10,9 +10,10 @@ from typing import Any
 # NOTE: This module must support Python 2.7 in addition to Python 3.x
 
 import sys
-# _type_check is NOT a part of public typing API, it is used here only to mimic
-# the (convenient) behavior of types provided by typing module.
-from typing import _type_check  # type: ignore
+# _GenericAlias, _Special_Form, _tp_check and _type_check are NOT a part of
+# public typing API, they are used here only to mimic the (convenient) behavior
+# of types provided by typing module.
+from typing import _GenericAlias, _SpecialForm, _tp_cache, _type_check  # type: ignore
 
 
 def _check_fails(cls, other):
@@ -164,3 +165,32 @@ class _FlexibleAliasCls:
 
 
 FlexibleAlias = _FlexibleAliasCls()
+
+
+class _Expand(_SpecialForm, _root=True):
+    def __repr__(self):
+        return 'mypy_extensions.' + self._name
+
+    @_tp_cache
+    def __getitem__(self, parameters):
+        if parameters == ():
+            raise TypeError('Cannot use Expand without an argument.')
+        item = _type_check(parameters, 'Expand accepts only a single TypedDict type.')
+        return _GenericAlias(self, (item,))
+
+
+Expand = _Expand('Expand', doc="""Special type indicating the type of ``**kwargs``.
+    Example::
+
+        class Options(TypedDict, total=False):
+            timeout: int
+            alternative: str
+            on_error: Callable[[int], None]
+            on_timeout: Callable[[], None]
+            ...
+
+        def fun(x: int, *, **options: Expand[Options]) -> None:
+            ...
+    
+    Cannot be used anywhere except with ``**kwargs`` in function definitions.
+    The only valid argument is of type ``TypedDict``.""")
