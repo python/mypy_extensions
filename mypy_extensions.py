@@ -10,7 +10,7 @@ from typing import Any
 # NOTE: This module must support Python 2.7 in addition to Python 3.x
 
 import sys
-# _GenericAlias, _Special_Form, _tp_check and _type_check are NOT a part of
+# _GenericAlias, _SpecialForm, _tp_cache and _type_check are NOT a part of
 # public typing API, they are used here only to mimic the (convenient) behavior
 # of types provided by typing module.
 from typing import _GenericAlias, _SpecialForm, _tp_cache, _type_check  # type: ignore
