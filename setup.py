@@ -1,6 +1,6 @@
 from setuptools import setup
 
-version = '0.5.0-dev'
+version = '1.0.0-dev'
 description = 'Experimental type system extensions for programs checked with the mypy typechecker.'
 long_description = '''
 Mypy Extensions
@@ -11,7 +11,7 @@ standard "typing" module that are supported by the mypy typechecker.
 '''.lstrip()
 
 classifiers = [
-    'Development Status :: 2 - Pre-Alpha',
+    'Development Status :: 5 - Production/Stable',
     'Environment :: Console',
     'Intended Audience :: Developers',
     'License :: OSI Approved :: MIT License',
