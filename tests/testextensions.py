@@ -89,9 +89,9 @@ class TypedDictTests(BaseTestCase):
         with self.assertRaises(TypeError):
             issubclass(dict, Emp)  # type: ignore
         with self.assertRaises(TypeError):
-            TypedDict('Hi', x=1)
+            TypedDict('Hi', x=())
         with self.assertRaises(TypeError):
-            TypedDict('Hi', [('x', int), ('y', 1)])
+            TypedDict('Hi', [('x', int), ('y', ())])
         with self.assertRaises(TypeError):
             TypedDict('Hi', [('x', int)], y=int)
 
