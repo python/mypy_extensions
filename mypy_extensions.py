@@ -162,3 +162,52 @@ class _FlexibleAliasCls:
 
 
 FlexibleAlias = _FlexibleAliasCls()
+
+
+class _NativeIntMeta(type):
+    def __instancecheck__(cls, inst):
+        return isinstance(inst, int)
+
+
+_sentinel = object()
+
+
+class i64(metaclass=_NativeIntMeta):
+    def __new__(cls, x=0, base=_sentinel):
+        if base is not _sentinel:
+            return int(x, base)
+        return int(x)
+
+
+class i32(metaclass=_NativeIntMeta):
+    def __new__(cls, x=0, base=_sentinel):
+        if base is not _sentinel:
+            return int(x, base)
+        return int(x)
+
+
+class i16(metaclass=_NativeIntMeta):
+    def __new__(cls, x=0, base=_sentinel):
+        if base is not _sentinel:
+            return int(x, base)
+        return int(x)
+
+
+class u8(metaclass=_NativeIntMeta):
+    def __new__(cls, x=0, base=_sentinel):
+        if base is not _sentinel:
+            return int(x, base)
+        return int(x)
+
+
+for _int_type in i64, i32, i16, u8:
+    _int_type.__doc__ = \
+        """A native fixed-width integer type when used with mypyc.
+
+        In code not compiled with mypyc, behaves like the 'int' type in these
+        runtime contexts:
+
+        * {name}(x[, base=n]) converts a number or string to 'int'
+        * isinstance(x, {name}) is the same as isinstance(x, int)
+        """.format(name=_int_type.__name__)
+del _int_type
