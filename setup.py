@@ -1,5 +1,3 @@
-# NOTE: This package must support Python 2.7 in addition to Python 3.x
-
 from setuptools import setup
 
 version = '0.5.0-dev'
@@ -17,8 +15,6 @@ classifiers = [
     'Environment :: Console',
     'Intended Audience :: Developers',
     'License :: OSI Approved :: MIT License',
-    'Programming Language :: Python :: 2',
-    'Programming Language :: Python :: 2.7',
     'Programming Language :: Python :: 3',
     'Programming Language :: Python :: 3.5',
     'Programming Language :: Python :: 3.6',
@@ -41,7 +37,4 @@ setup(
     license='MIT License',
     py_modules=['mypy_extensions'],
     classifiers=classifiers,
-    install_requires=[
-        'typing >= 3.5.3; python_version < "3.5"',
-    ],
 )

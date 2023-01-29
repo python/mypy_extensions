@@ -7,8 +7,6 @@ Example usage:
 
 from typing import Any
 
-# NOTE: This module must support Python 2.7 in addition to Python 3.x
-
 import sys
 # _type_check is NOT a part of public typing API, it is used here only to mimic
 # the (convenient) behavior of types provided by typing module.
@@ -98,7 +96,7 @@ TypedDict.__doc__ = \
             label: str
 
     The latter syntax is only supported in Python 3.6+, while two other
-    syntax forms work for Python 2.7 and 3.2+
+    syntax forms work for 3.2+
     """
 
 # Argument constructors for making more-detailed Callables. These all just
