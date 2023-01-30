@@ -2,7 +2,7 @@ import sys
 import pickle
 import typing
 from unittest import TestCase, main, skipUnless
-from mypy_extensions import TypedDict
+from mypy_extensions import TypedDict, i64, i32, i16, u8
 
 
 class BaseTestCase(TestCase):
@@ -138,6 +138,47 @@ class TypedDictTests(BaseTestCase):
             self.assertEqual(Options(), {})  # noqa
             self.assertEqual(Options(log_level=2), {'log_level': 2})  # noqa
             self.assertEqual(Options.__total__, False)  # noqa
+
+
+native_int_types = [i64, i32, i16, u8]
+
+
+class MypycNativeIntTests(TestCase):
+    def test_construction(self):
+        for native_int in native_int_types:
+            self.assert_same(native_int(), 0)
+
+            self.assert_same(native_int(0), 0)
+            self.assert_same(native_int(1), 1)
+            self.assert_same(native_int(-3), -3)
+            self.assert_same(native_int(2**64), 2**64)
+            self.assert_same(native_int(-2**64), -2**64)
+
+            self.assert_same(native_int(1.234), 1)
+            self.assert_same(native_int(2.634), 2)
+            self.assert_same(native_int(-1.234), -1)
+            self.assert_same(native_int(-2.634), -2)
+
+            self.assert_same(native_int("0"), 0)
+            self.assert_same(native_int("123"), 123)
+            self.assert_same(native_int("abc", 16), 2748)
+            self.assert_same(native_int("-101", base=2), -5)
+
+    def test_isinstance(self):
+        for native_int in native_int_types:
+            assert isinstance(0, native_int)
+            assert isinstance(1234, native_int)
+            assert isinstance(True, native_int)
+            assert not isinstance(1.0, native_int)
+
+    def test_docstring(self):
+        for native_int in native_int_types:
+            # Just check that a docstring exists
+            assert native_int.__doc__
+
+    def assert_same(self, x, y):
+        assert type(x) is type(y)
+        assert x == y
 
 
 if __name__ == '__main__':
