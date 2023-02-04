@@ -1,13 +1,13 @@
 from setuptools import setup
 
 version = '1.0.0-dev'
-description = 'Experimental type system extensions for programs checked with the mypy typechecker.'
+description = 'Type system extensions for programs checked with the mypy type checker.'
 long_description = '''
 Mypy Extensions
 ===============
 
-The "mypy_extensions" module defines experimental extensions to the
-standard "typing" module that are supported by the mypy typechecker.
+The "mypy_extensions" module defines extensions to the standard "typing" module
+that are supported by the mypy type checker and the mypyc compiler.
 '''.lstrip()
 
 classifiers = [
