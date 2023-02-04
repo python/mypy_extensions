@@ -30,6 +30,7 @@ classifiers = [
 
 setup(
     name='mypy_extensions',
+    python_requires='>=2.7',
     version=version,
     description=description,
     long_description=long_description,
