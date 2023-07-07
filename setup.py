@@ -16,8 +16,6 @@ classifiers = [
     'Intended Audience :: Developers',
     'License :: OSI Approved :: MIT License',
     'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.5',
-    'Programming Language :: Python :: 3.6',
     'Programming Language :: Python :: 3.7',
     'Programming Language :: Python :: 3.8',
     'Programming Language :: Python :: 3.9',
@@ -28,7 +26,7 @@ classifiers = [
 
 setup(
     name='mypy_extensions',
-    python_requires='>=3.5',
+    python_requires='>=3.7',
     version=version,
     description=description,
     long_description=long_description,
