@@ -53,8 +53,7 @@ class TypedDictTests(BaseTestCase):
     @contextmanager
     def assert_typeddict_deprecated(self):
         with self.assertWarnsRegex(
-            DeprecationWarning,
-            "mypy_extensions.TypedDict is deprecated"
+            DeprecationWarning, "mypy_extensions.TypedDict is deprecated"
         ):
             yield
 
