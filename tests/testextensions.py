@@ -1,6 +1,8 @@
 import sys
 import pickle
 import typing
+from contextlib import contextmanager
+from textwrap import dedent
 from unittest import TestCase, main, skipUnless
 from mypy_extensions import TypedDict, i64, i32, i16, u8
 
@@ -25,17 +27,22 @@ class BaseTestCase(TestCase):
 PY36 = sys.version_info[:2] >= (3, 6)
 
 PY36_TESTS = """
-Label = TypedDict('Label', [('label', str)])
+import warnings
 
-class Point2D(TypedDict):
-    x: int
-    y: int
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore", category=DeprecationWarning)
 
-class LabelPoint2D(Point2D, Label): ...
+    Label = TypedDict('Label', [('label', str)])
 
-class Options(TypedDict, total=False):
-    log_level: int
-    log_path: str
+    class Point2D(TypedDict):
+        x: int
+        y: int
+
+    class LabelPoint2D(Point2D, Label): ...
+
+    class Options(TypedDict, total=False):
+        log_level: int
+        log_path: str
 """
 
 if PY36:
@@ -43,9 +50,17 @@ if PY36:
 
 
 class TypedDictTests(BaseTestCase):
+    @contextmanager
+    def assert_typeddict_deprecated(self):
+        with self.assertWarnsRegex(
+            DeprecationWarning,
+            "mypy_extensions.TypedDict is deprecated"
+        ):
+            yield
 
     def test_basics_iterable_syntax(self):
-        Emp = TypedDict('Emp', {'name': str, 'id': int})
+        with self.assert_typeddict_deprecated():
+            Emp = TypedDict('Emp', {'name': str, 'id': int})
         self.assertIsSubclass(Emp, dict)
         self.assertIsSubclass(Emp, typing.MutableMapping)
         if sys.version_info[0] >= 3:
@@ -62,7 +77,8 @@ class TypedDictTests(BaseTestCase):
         self.assertEqual(Emp.__total__, True)
 
     def test_basics_keywords_syntax(self):
-        Emp = TypedDict('Emp', name=str, id=int)
+        with self.assert_typeddict_deprecated():
+            Emp = TypedDict('Emp', name=str, id=int)
         self.assertIsSubclass(Emp, dict)
         self.assertIsSubclass(Emp, typing.MutableMapping)
         if sys.version_info[0] >= 3:
@@ -79,7 +95,8 @@ class TypedDictTests(BaseTestCase):
         self.assertEqual(Emp.__total__, True)
 
     def test_typeddict_errors(self):
-        Emp = TypedDict('Emp', {'name': str, 'id': int})
+        with self.assert_typeddict_deprecated():
+            Emp = TypedDict('Emp', {'name': str, 'id': int})
         self.assertEqual(TypedDict.__module__, 'mypy_extensions')
         jim = Emp(name='Jim', id=1)
         with self.assertRaises(TypeError):
@@ -88,9 +105,9 @@ class TypedDictTests(BaseTestCase):
             isinstance(jim, Emp)  # type: ignore
         with self.assertRaises(TypeError):
             issubclass(dict, Emp)  # type: ignore
-        with self.assertRaises(TypeError):
+        with self.assertRaises(TypeError), self.assert_typeddict_deprecated():
             TypedDict('Hi', x=())
-        with self.assertRaises(TypeError):
+        with self.assertRaises(TypeError), self.assert_typeddict_deprecated():
             TypedDict('Hi', [('x', int), ('y', ())])
         with self.assertRaises(TypeError):
             TypedDict('Hi', [('x', int)], y=int)
@@ -109,9 +126,20 @@ class TypedDictTests(BaseTestCase):
         other = LabelPoint2D(x=0, y=1, label='hi')  # noqa
         self.assertEqual(other['label'], 'hi')
 
+    if PY36:
+        exec(dedent(
+            """
+            def test_py36_class_usage_emits_deprecations(self):
+                with self.assert_typeddict_deprecated():
+                    class Foo(TypedDict):
+                        bar: int
+            """
+        ))
+
     def test_pickle(self):
         global EmpD  # pickle wants to reference the class by name
-        EmpD = TypedDict('EmpD', name=str, id=int)
+        with self.assert_typeddict_deprecated():
+            EmpD = TypedDict('EmpD', name=str, id=int)
         jane = EmpD({'name': 'jane', 'id': 37})
         for proto in range(pickle.HIGHEST_PROTOCOL + 1):
             z = pickle.dumps(jane, proto)
@@ -123,13 +151,15 @@ class TypedDictTests(BaseTestCase):
             self.assertEqual(EmpDnew({'name': 'jane', 'id': 37}), jane)
 
     def test_optional(self):
-        EmpD = TypedDict('EmpD', name=str, id=int)
+        with self.assert_typeddict_deprecated():
+            EmpD = TypedDict('EmpD', name=str, id=int)
 
         self.assertEqual(typing.Optional[EmpD], typing.Union[None, EmpD])
         self.assertNotEqual(typing.List[EmpD], typing.Tuple[EmpD])
 
     def test_total(self):
-        D = TypedDict('D', {'x': int}, total=False)
+        with self.assert_typeddict_deprecated():
+            D = TypedDict('D', {'x': int}, total=False)
         self.assertEqual(D(), {})
         self.assertEqual(D(x=1), {'x': 1})
         self.assertEqual(D.__total__, False)
