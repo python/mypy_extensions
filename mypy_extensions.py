@@ -42,17 +42,32 @@ def _typeddict_new(cls, _typename, _fields=None, **kwargs):
     except (AttributeError, ValueError):
         pass
 
-    return _TypedDictMeta(_typename, (), ns)
+    return _TypedDictMeta(_typename, (), ns, _from_functional_call=True)
 
 
 class _TypedDictMeta(type):
-    def __new__(cls, name, bases, ns, total=True):
+    def __new__(cls, name, bases, ns, total=True, _from_functional_call=False):
         # Create new typed dict class object.
         # This method is called directly when TypedDict is subclassed,
         # or via _typeddict_new when TypedDict is instantiated. This way
         # TypedDict supports all three syntaxes described in its docstring.
         # Subclasses and instances of TypedDict return actual dictionaries
         # via _dict_new.
+
+        # We need the `if TypedDict in globals()` check,
+        # or we emit a DeprecationWarning when creating mypy_extensions.TypedDict itself
+        if 'TypedDict' in globals():
+            import warnings
+            warnings.warn(
+                (
+                    "mypy_extensions.TypedDict is deprecated, "
+                    "and will be removed in a future version. "
+                    "Use typing.TypedDict or typing_extensions.TypedDict instead."
+                ),
+                DeprecationWarning,
+                stacklevel=(3 if _from_functional_call else 2)
+            )
+
         ns['__new__'] = _typeddict_new if name == 'TypedDict' else _dict_new
         tp_dict = super(_TypedDictMeta, cls).__new__(cls, name, (dict,), ns)
 
