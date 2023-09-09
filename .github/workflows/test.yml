@@ -22,7 +22,7 @@ jobs:
       contents: read
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - uses: actions/setup-python@v4
       with:
@@ -52,14 +52,16 @@ jobs:
           "3.9",
           "3.10",
           "3.11",
+          "3.12",
         ]
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python }}
+        allow-prereleases: true
 
     - name: Install dependencies
       run: |
