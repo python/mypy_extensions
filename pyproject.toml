@@ -25,7 +25,7 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Topic :: Software Development",
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.8"
 
 [project.urls]
 Homepage = "https://github.com/python/mypy_extensions"
