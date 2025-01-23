@@ -1,9 +1,9 @@
-import sys
+import collections.abc
 import pickle
 import typing
+import warnings
 from contextlib import contextmanager
-from textwrap import dedent
-from unittest import TestCase, main, skipUnless
+from unittest import TestCase, main
 from mypy_extensions import TypedDict, i64, i32, i16, u8
 
 
@@ -24,11 +24,6 @@ class BaseTestCase(TestCase):
             raise self.failureException(message)
 
 
-PY36 = sys.version_info[:2] >= (3, 6)
-
-PY36_TESTS = """
-import warnings
-
 with warnings.catch_warnings():
     warnings.simplefilter("ignore", category=DeprecationWarning)
 
@@ -43,10 +38,6 @@ with warnings.catch_warnings():
     class Options(TypedDict, total=False):
         log_level: int
         log_path: str
-"""
-
-if PY36:
-    exec(PY36_TESTS)
 
 
 class TypedDictTests(BaseTestCase):
@@ -62,9 +53,7 @@ class TypedDictTests(BaseTestCase):
             Emp = TypedDict('Emp', {'name': str, 'id': int})
         self.assertIsSubclass(Emp, dict)
         self.assertIsSubclass(Emp, typing.MutableMapping)
-        if sys.version_info[0] >= 3:
-            import collections.abc
-            self.assertNotIsSubclass(Emp, collections.abc.Sequence)
+        self.assertNotIsSubclass(Emp, collections.abc.Sequence)
         jim = Emp(name='Jim', id=1)
         self.assertIs(type(jim), dict)
         self.assertEqual(jim['name'], 'Jim')
@@ -80,9 +69,7 @@ class TypedDictTests(BaseTestCase):
             Emp = TypedDict('Emp', name=str, id=int)
         self.assertIsSubclass(Emp, dict)
         self.assertIsSubclass(Emp, typing.MutableMapping)
-        if sys.version_info[0] >= 3:
-            import collections.abc
-            self.assertNotIsSubclass(Emp, collections.abc.Sequence)
+        self.assertNotIsSubclass(Emp, collections.abc.Sequence)
         jim = Emp(name='Jim', id=1)  # type: ignore # mypy doesn't support keyword syntax yet
         self.assertIs(type(jim), dict)
         self.assertEqual(jim['name'], 'Jim')
@@ -111,7 +98,6 @@ class TypedDictTests(BaseTestCase):
         with self.assertRaises(TypeError):
             TypedDict('Hi', [('x', int)], y=int)
 
-    @skipUnless(PY36, 'Python 3.6 required')
     def test_py36_class_syntax_usage(self):
         self.assertEqual(LabelPoint2D.__name__, 'LabelPoint2D')  # noqa
         self.assertEqual(LabelPoint2D.__module__, __name__)  # noqa
@@ -125,15 +111,10 @@ class TypedDictTests(BaseTestCase):
         other = LabelPoint2D(x=0, y=1, label='hi')  # noqa
         self.assertEqual(other['label'], 'hi')
 
-    if PY36:
-        exec(dedent(
-            """
-            def test_py36_class_usage_emits_deprecations(self):
-                with self.assert_typeddict_deprecated():
-                    class Foo(TypedDict):
-                        bar: int
-            """
-        ))
+    def test_py36_class_usage_emits_deprecations(self):
+        with self.assert_typeddict_deprecated():
+            class Foo(TypedDict):
+                bar: int
 
     def test_pickle(self):
         global EmpD  # pickle wants to reference the class by name
@@ -163,10 +144,9 @@ class TypedDictTests(BaseTestCase):
         self.assertEqual(D(x=1), {'x': 1})
         self.assertEqual(D.__total__, False)
 
-        if PY36:
-            self.assertEqual(Options(), {})  # noqa
-            self.assertEqual(Options(log_level=2), {'log_level': 2})  # noqa
-            self.assertEqual(Options.__total__, False)  # noqa
+        self.assertEqual(Options(), {})  # noqa
+        self.assertEqual(Options(log_level=2), {'log_level': 2})  # noqa
+        self.assertEqual(Options.__total__, False)  # noqa
 
 
 native_int_types = [i64, i32, i16, u8]
