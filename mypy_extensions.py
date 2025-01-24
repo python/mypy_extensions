@@ -5,7 +5,7 @@ Example usage:
     from mypy_extensions import TypedDict
 """
 
-from typing import Any
+from typing import Any, Dict
 
 import sys
 # _type_check is NOT a part of public typing API, it is used here only to mimic
@@ -150,7 +150,8 @@ def KwArg(type=Any):
 
 
 # Return type that indicates a function does not return
-class NoReturn: pass
+# Deprecated, use typing or typing_extensions variants instead
+class _DEPRECATED_NoReturn: pass
 
 
 def trait(cls):
@@ -226,3 +227,25 @@ for _int_type in i64, i32, i16, u8:
         * isinstance(x, {name}) is the same as isinstance(x, int)
         """.format(name=_int_type.__name__)
 del _int_type
+
+
+def _warn_deprecation(name: str, module_globals: Dict[str, Any]) -> Any:
+    if (val := module_globals.get(f"_DEPRECATED_{name}")) is None:
+        msg = f"module '{__name__}' has no attribute '{name}'"
+        raise AttributeError(msg)
+    module_globals[name] = val
+    if name in {"NoReturn"}:
+        msg = (
+            f"'mypy_extensions.{name}' is deprecated, "
+            "and will be removed in a future version. "
+            f"Use 'typing.{name}' or 'typing_extensions.{name}' instead"
+        )
+    else:
+        assert False, f"Add deprecation message for 'mypy_extensions.{name}'"
+    import warnings
+    warnings.warn(msg, DeprecationWarning, stacklevel=3)
+    return val
+
+
+def __getattr__(name: str) -> Any:
+    return _warn_deprecation(name, module_globals=globals())
