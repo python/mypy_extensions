@@ -1,5 +1,6 @@
 import collections.abc
 import pickle
+import sys
 import typing
 import warnings
 from contextlib import contextmanager
@@ -188,6 +189,22 @@ class MypycNativeIntTests(TestCase):
     def assert_same(self, x, y):
         assert type(x) is type(y)
         assert x == y
+
+
+class DeprecationTests(TestCase):
+    def test_no_return_deprecation(self):
+        del sys.modules["mypy_extensions"]
+        with self.assertWarnsRegex(
+            DeprecationWarning, "'mypy_extensions.NoReturn' is deprecated"
+        ):
+            import mypy_extensions
+            mypy_extensions.NoReturn
+
+        del sys.modules["mypy_extensions"]
+        with self.assertWarnsRegex(
+            DeprecationWarning, "'mypy_extensions.NoReturn' is deprecated"
+        ):
+            from mypy_extensions import NoReturn  # noqa: F401
 
 
 if __name__ == '__main__':
