@@ -1,6 +1,0 @@
-# files necessary for testing sdist
-graft tests
-include tox.ini
-
-global-exclude *.py[cod]
-global-exclude .DS_Store
