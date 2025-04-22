@@ -11,6 +11,7 @@ authors     = [
     {name = "The mypy developers", email = "jukka.lehtosalo@iki.fi"}
 ]
 license     = "MIT"
+license-files = ["LICENSE"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Environment :: Console",
