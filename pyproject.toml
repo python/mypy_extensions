@@ -4,7 +4,7 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name        = "mypy_extensions"
-version     = "1.1.0-dev"
+version     = "1.1.0"
 description = "Type system extensions for programs checked with the mypy type checker."
 readme      = "README.md"
 authors     = [
