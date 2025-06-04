@@ -10,7 +10,7 @@ readme      = "README.md"
 authors     = [
     {name = "The mypy developers", email = "jukka.lehtosalo@iki.fi"}
 ]
-license     = "MIT"
+license     = { text = "MIT" }
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Environment :: Console",
