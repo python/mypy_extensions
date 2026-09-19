@@ -209,6 +209,34 @@ class i16(metaclass=_NativeIntMeta):
         return int(x)
 
 
+class i8(metaclass=_NativeIntMeta):
+    def __new__(cls, x=0, base=_sentinel):
+        if base is not _sentinel:
+            return int(x, base)
+        return int(x)
+
+
+class u64(metaclass=_NativeIntMeta):
+    def __new__(cls, x=0, base=_sentinel):
+        if base is not _sentinel:
+            return int(x, base)
+        return int(x)
+
+
+class u32(metaclass=_NativeIntMeta):
+    def __new__(cls, x=0, base=_sentinel):
+        if base is not _sentinel:
+            return int(x, base)
+        return int(x)
+
+
+class u16(metaclass=_NativeIntMeta):
+    def __new__(cls, x=0, base=_sentinel):
+        if base is not _sentinel:
+            return int(x, base)
+        return int(x)
+
+
 class u8(metaclass=_NativeIntMeta):
     def __new__(cls, x=0, base=_sentinel):
         if base is not _sentinel:
@@ -216,7 +244,7 @@ class u8(metaclass=_NativeIntMeta):
         return int(x)
 
 
-for _int_type in i64, i32, i16, u8:
+for _int_type in i64, i32, i16, i8, u64, u32, u16, u8:
     _int_type.__doc__ = \
         """A native fixed-width integer type when used with mypyc.
 

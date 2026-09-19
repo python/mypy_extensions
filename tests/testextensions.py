@@ -5,7 +5,7 @@ import typing
 import warnings
 from contextlib import contextmanager
 from unittest import TestCase, main
-from mypy_extensions import TypedDict, i64, i32, i16, u8
+from mypy_extensions import TypedDict, i64, i32, i16, i8, u64, u32, u16, u8
 
 
 class BaseTestCase(TestCase):
@@ -150,7 +150,7 @@ class TypedDictTests(BaseTestCase):
         self.assertEqual(Options.__total__, False)  # noqa
 
 
-native_int_types = [i64, i32, i16, u8]
+native_int_types = [i64, i32, i16, i8, u64, u32, u16, u8]
 
 
 class MypycNativeIntTests(TestCase):
