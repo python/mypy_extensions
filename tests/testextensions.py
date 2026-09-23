@@ -112,6 +112,53 @@ class TypedDictTests(BaseTestCase):
         other = LabelPoint2D(x=0, y=1, label='hi')  # noqa
         self.assertEqual(other['label'], 'hi')
 
+    def test_class_annotations(self):
+        LocalType = int
+        with self.assert_typeddict_deprecated():
+            class Local(TypedDict):
+                value: LocalType
+
+        self.assertEqual(Local.__annotations__, {'value': int})
+        with self.assert_typeddict_deprecated():
+            class Child(Local):
+                label: str
+
+        self.assertEqual(Child.__annotations__, {'value': int, 'label': str})
+        self.assertEqual(Local.__annotations__, {'value': int})
+
+    def test_class_invalid_annotation(self):
+        with self.assertRaises(TypeError), self.assert_typeddict_deprecated():
+            class Invalid(TypedDict):
+                value: ()
+
+    def test_class_forward_reference(self):
+        with self.assert_typeddict_deprecated():
+            class Forward(TypedDict):
+                value: 'Later'
+
+        class Later:
+            pass
+
+        self.assertEqual(typing.get_type_hints(Forward, localns={'Later': Later}),
+                         {'value': Later})
+
+    def test_class_deferred_self_reference(self):
+        if sys.version_info < (3, 14):
+            self.skipTest('requires deferred annotations')
+        namespace = {'TypedDict': TypedDict}
+        with self.assert_typeddict_deprecated():
+            exec('class Node(TypedDict):\n    child: Node', namespace)
+        Node = namespace['Node']
+        self.assertEqual(typing.get_type_hints(Node, globalns=namespace), {'child': Node})
+
+    def test_class_future_annotations(self):
+        namespace = {'TypedDict': TypedDict}
+        with self.assert_typeddict_deprecated():
+            exec('from __future__ import annotations\n'
+                 'class Future(TypedDict):\n    value: int', namespace)
+        self.assertEqual(typing.get_type_hints(namespace['Future'], globalns=namespace),
+                         {'value': int})
+
     def test_py36_class_usage_emits_deprecations(self):
         with self.assert_typeddict_deprecated():
             class Foo(TypedDict):
