@@ -71,11 +71,15 @@ class _TypedDictMeta(type):
         ns['__new__'] = _typeddict_new if name == 'TypedDict' else _dict_new
         tp_dict = super(_TypedDictMeta, cls).__new__(cls, name, (dict,), ns)
 
-        anns = ns.get('__annotations__', {})
+        if sys.version_info >= (3, 14):
+            import annotationlib
+            anns = annotationlib.get_annotations(tp_dict, format=annotationlib.Format.FORWARDREF)
+        else:
+            anns = ns.get('__annotations__', {})
         msg = "TypedDict('Name', {f0: t0, f1: t1, ...}); each t must be a type"
         anns = {n: _type_check(tp, msg) for n, tp in anns.items()}
         for base in bases:
-            anns.update(base.__dict__.get('__annotations__', {}))
+            anns.update(getattr(base, '__annotations__', {}))
         tp_dict.__annotations__ = anns
         if not hasattr(tp_dict, '__total__'):
             tp_dict.__total__ = total
