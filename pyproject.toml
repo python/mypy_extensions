@@ -10,7 +10,9 @@ readme      = "README.md"
 authors     = [
     {name = "The mypy developers", email = "jukka.lehtosalo@iki.fi"}
 ]
-license     = "MIT"
+license     = "MIT AND Apache-2.0"
+license-files = ["LICENSE", "LICENSE.typeshed"]
+dependencies = ["typing_extensions>=4.8"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Environment :: Console",
@@ -30,4 +32,4 @@ requires-python = ">=3.10"
 Homepage = "https://github.com/python/mypy_extensions"
 
 [tool.flit.sdist]
-include = ["tox.ini", "*/*test*.py"]
+include = ["tox.ini", "tests/*.py"]

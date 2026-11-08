@@ -69,3 +69,16 @@ jobs:
 
     - name: Test
       run: tox -e py
+
+  typing:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+    - run: python -m pip install tox
+    - run: tox -e typing,typing-old
